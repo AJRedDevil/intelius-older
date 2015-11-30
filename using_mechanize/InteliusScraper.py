@@ -60,8 +60,6 @@ class CSVFormat(object):
         age = item.get("age")
         emails = item.get("emails")
         index = self.get_index_of_name(name)
-        print self.data
-        print index
         if index == None:
             self.final_data.append({
                 "name": name,
