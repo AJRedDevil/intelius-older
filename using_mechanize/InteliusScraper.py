@@ -24,6 +24,7 @@ class CSVFormat(object):
     def __init__(self, file_name, data):
         self.data = data
         self.final_data = []
+        file_name = "all_data.csv"
         file_path = os.path.join(STORAGE_PATH, file_name)
         self.file_name = file_path
 
@@ -34,23 +35,24 @@ class CSVFormat(object):
             return None
 
     def format_csv(self):
-        csv_file = csv.writer(open(self.file_name, "w"), lineterminator='\n')
-        for item in self.final_data:
-            name = [item.get("name")]
-            items = item.get("items")
-            for row in items:
-                addresses = row.get("addresses")
-                phone_nos = row.get("phone_nos")
-                age = [row.get("age").replace("Age: ", "")]
-                emails = row.get("emails")
-                display = map(None, name, age, addresses, phone_nos, emails)
-                for y in display:
-                    _row = tuple('' if x == None else x for x in y)
-                    csv_file.writerow(_row)
-                csv_file.writerow(("", ))
+        with open(self.file_name, "a") as csvfile:
+            csv_file = csv.writer(csvfile, lineterminator='\n')
+            for item in self.final_data:
+                name = [item.get("name")]
+                items = item.get("items")
+                for row in items:
+                    addresses = row.get("addresses")
+                    phone_nos = row.get("phone_nos")
+                    age = [row.get("age").replace("Age: ", "")]
+                    emails = row.get("emails")
+                    display = map(None, name, age, addresses, phone_nos, emails)
+                    for y in display:
+                        _row = tuple('' if x == None else x for x in y)
+                        csv_file.writerow(_row)
+                    csv_file.writerow(("", ))
 
-            csv_file.writerow(("*"*15, "*"*15, "*"*15, "*"*15))
-            csv_file.writerow(("", ))
+                csv_file.writerow(("*"*15, "*"*15, "*"*15, "*"*15))
+                csv_file.writerow(("", ))
 
 
     def parse(self, item):
