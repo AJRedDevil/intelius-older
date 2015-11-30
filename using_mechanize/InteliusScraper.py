@@ -18,6 +18,74 @@ import helper
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 DRIVER_PATH = os.path.join(CURRENT_DIR, '../bin', helper.readConfig().get('DRIVER','FILENAME'))
+STORAGE_PATH = os.path.join(CURRENT_DIR, '..', helper.readConfig().get('STORAGE','PATH'))
+
+class CSVFormat(object):
+    def __init__(self, file_name, data):
+        self.data = data
+        self.final_data = []
+        file_path = os.path.join(STORAGE_PATH, file_name)
+        self.file_name = file_path
+
+    def get_index_of_name(self, name):
+        try:
+            return next(index for (index, item) in enumerate(self.final_data) if item["name"].lower() == name.lower())
+        except:
+            return None
+
+    def format_csv(self):
+        csv_file = csv.writer(open(self.file_name, "w"), lineterminator='\n')
+        for item in self.final_data:
+            name = [item.get("name")]
+            items = item.get("items")
+            for row in items:
+                addresses = row.get("addresses")
+                phone_nos = row.get("phone_nos")
+                age = [row.get("age").replace("Age: ", "")]
+                emails = row.get("emails")
+                display = map(None, name, age, addresses, phone_nos, emails)
+                for y in display:
+                    _row = tuple('' if x == None else x for x in y)
+                    csv_file.writerow(_row)
+                csv_file.writerow(("", ))
+
+            csv_file.writerow(("*"*15, "*"*15, "*"*15, "*"*15))
+            csv_file.writerow(("", ))
+
+
+    def parse(self, item):
+        name = item.get("name")
+        addresses = item.get("addresses")
+        phone_nos = item.get("phone_nos")
+        age = item.get("age")
+        emails = item.get("emails")
+        index = self.get_index_of_name(name)
+        print self.data
+        print index
+        if index == None:
+            self.final_data.append({
+                "name": name,
+                "items": [{
+                    "addresses": addresses,
+                    "phone_nos": phone_nos,
+                    "age": age,
+                    "emails": emails
+                }]
+            })
+        else:
+            self.final_data[index]["items"].append({
+                    "addresses": addresses,
+                    "phone_nos": phone_nos,
+                    "age": age,
+                    "emails": emails
+                })
+
+    def start(self):
+        for item in self.data:
+            self.parse(item)
+
+        self.format_csv()
+
 
 class InteliusScraper(object):
     def extract_profile_links(self, source):
@@ -49,3 +117,9 @@ class InteliusScraper(object):
     def __save_full_profile(self,index, first_name, last_name, data):
         file_name = "{0}_{1}_{2}".format(index, first_name, last_name)
         helper.save_detail_to_storage(file_name, data)
+        self.__save_to_csv(file_name, data)
+
+    def __save_to_csv(self, file_name, data):
+        file_name = "%s.csv" % file_name
+        csvformat = CSVFormat(file_name, data)
+        csvformat.start()
