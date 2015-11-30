@@ -11,6 +11,8 @@ from lxml import html
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 
+import helper
+
 from InteliusScraper import InteliusScraper
 
 class MechanizeBrowser(object):
@@ -19,8 +21,8 @@ class MechanizeBrowser(object):
         self.BASE_URL = "https://iservices.intelius.com/premier/dashboard.php"
 
         self.login_required = True
-        self.username = os.environ['EMAIL']
-        self.password = os.environ['PASSWORD']
+        self.username = helper.readConfig().get('LOGIN','EMAIL')
+        self.password = helper.readConfig().get('LOGIN','PASSWORD')
         self.login_url = self.BASE_URL
         self.login_form_index = 0  # index of form to use as login
         self.login_user_key = "email"
