@@ -35,10 +35,10 @@ try:
             try:
                 browser.search(index, first_name, last_name, city_state)
                 log.info("Parsed for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (first_name, last_name, city_state, index))
-                print "Parsed for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (first_name, last_name, city_state, index)
                 time.sleep(1)
             except Exception, e:
                 print str(e)
+                print "Error Parsing for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (first_name, last_name, city_state, index)
                 tb = traceback.format_exc()
                 if tb:
                     print tb
