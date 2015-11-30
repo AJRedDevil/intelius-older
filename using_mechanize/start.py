@@ -49,3 +49,7 @@ except Exception, e:
     tb = traceback.format_exc()
 else:
     tb = "No error"
+
+print tb
+print "Parsing completed"
+
