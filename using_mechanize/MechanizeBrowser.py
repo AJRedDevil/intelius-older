@@ -17,7 +17,7 @@ from InteliusScraper import InteliusScraper
 
 class MechanizeBrowser(object):
 
-    def __init__(self):
+    def __init__(self, section):
         self.BASE_URL = "https://iservices.intelius.com/premier/dashboard.php"
 
         self.login_required = True
@@ -27,6 +27,8 @@ class MechanizeBrowser(object):
         self.login_form_index = 0  # index of form to use as login
         self.login_user_key = "email"
         self.login_password_key = "password"
+
+        self.section = section
 
         self.first_search = True
         self.profile_url_lists = []
@@ -116,7 +118,7 @@ class MechanizeBrowser(object):
 
         self.extract_all_profiles_from_search()
 
-        self.scraper.save_full_profile(index, first_name, last_name ,self.profile_data)
+        self.scraper.save_full_profile(self.section, index, first_name, last_name, self.profile_data)
 
     def extract_all_profiles_from_search(self):
         for profile_url in self.profile_url_lists:

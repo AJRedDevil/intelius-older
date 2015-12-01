@@ -21,12 +21,24 @@ DRIVER_PATH = os.path.join(CURRENT_DIR, '../bin', helper.readConfig().get('DRIVE
 STORAGE_PATH = os.path.join(CURRENT_DIR, '..', helper.readConfig().get('STORAGE','PATH'))
 
 class CSVFormat(object):
-    def __init__(self, file_name, data):
+    def __init__(self, section, file_name, data):
         self.data = data
         self.final_data = []
-        file_name = "all_data.csv"
-        file_path = os.path.join(STORAGE_PATH, file_name)
+        file_name = "results.csv"
+
+        file_path = os.path.join(STORAGE_PATH, section)
+        self.__check_path(file_path)
+
+        file_path = os.path.join(STORAGE_PATH, section, file_name)
         self.file_name = file_path
+
+    def __check_path(self, path):
+        '''
+        checks if path is present,
+        if not, create it.
+        '''
+        if not os.path.exists(path):
+            os.mkdir(path)
 
     def get_index_of_name(self, name):
         try:
@@ -111,15 +123,15 @@ class InteliusScraper(object):
         data['addresses'] = [" ".join(li.xpath("./a/text()")) for li in lexml.xpath("//ul[@class='addresses']/li")]
         return data
 
-    def save_full_profile(self, index, first_name, last_name, data):
-        self.__save_full_profile(index, first_name, last_name, data)
+    def save_full_profile(self, section, index, first_name, last_name, data):
+        self.__save_full_profile(section, index, first_name, last_name, data)
 
-    def __save_full_profile(self,index, first_name, last_name, data):
+    def __save_full_profile(self, section, index, first_name, last_name, data):
         file_name = "{0}_{1}_{2}".format(index, first_name, last_name)
         helper.save_detail_to_storage(file_name, data)
-        self.__save_to_csv(file_name, data)
+        self.__save_to_csv(section, file_name, data)
 
-    def __save_to_csv(self, file_name, data):
+    def __save_to_csv(self, section, file_name, data):
         file_name = "%s.csv" % file_name
-        csvformat = CSVFormat(file_name, data)
+        csvformat = CSVFormat(section, file_name, data)
         csvformat.start()
