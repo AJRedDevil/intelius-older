@@ -27,18 +27,10 @@ class CSVFormat(object):
         file_name = "results.csv"
 
         file_path = os.path.join(STORAGE_PATH, section)
-        self.__check_path(file_path)
+        helper.check_path(file_path)
 
         file_path = os.path.join(STORAGE_PATH, section, file_name)
         self.file_name = file_path
-
-    def __check_path(self, path):
-        '''
-        checks if path is present,
-        if not, create it.
-        '''
-        if not os.path.exists(path):
-            os.mkdir(path)
 
     def get_index_of_name(self, name):
         try:
@@ -128,7 +120,7 @@ class InteliusScraper(object):
 
     def __save_full_profile(self, section, index, first_name, last_name, data):
         file_name = "{0}_{1}_{2}".format(index, first_name, last_name)
-        helper.save_detail_to_storage(file_name, data)
+        helper.save_detail_to_storage(section, file_name, data)
         self.__save_to_csv(section, file_name, data)
 
     def __save_to_csv(self, section, file_name, data):

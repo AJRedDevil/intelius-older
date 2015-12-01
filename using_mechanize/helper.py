@@ -20,10 +20,14 @@ def setup_storage_path():
     if not os.path.exists(storage_path):
         os.makedirs(storage_path)
 
-def save_detail_to_storage(file_name, data):
+def save_detail_to_storage(section, file_name, data):
     config = readConfig()
     storage_path = os.path.join(CURRENT_DIR, '..', config.get('STORAGE','PATH'))
-    file_path = os.path.join(storage_path, file_name)
+
+    file_path = os.path.join(storage_path, section)
+    check_path(file_path)
+
+    file_path = os.path.join(storage_path, section, file_name)
     if not os.path.exists(file_path):
         setup_storage_path()
 
@@ -33,3 +37,11 @@ def save_detail_to_storage(file_name, data):
 def split_name(name):
 	_split = name.split()
 	return _split[0], _split[-1]
+
+def check_path(path):
+    '''
+    checks if path is present,
+    if not, create it.
+    '''
+    if not os.path.exists(path):
+        os.mkdir(path)
