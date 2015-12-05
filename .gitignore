@@ -58,3 +58,5 @@ docs/_build/
 # PyBuilder
 target/
 storage
+test.html
+test.py
