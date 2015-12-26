@@ -60,3 +60,4 @@ target/
 storage
 test.html
 test.py
+rethinkdb_data

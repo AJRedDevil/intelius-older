@@ -7,6 +7,10 @@ import csv
 import time
 import helper
 import traceback
+
+from database import configure_logging
+configure_logging()
+
 import logging as log
 
 from MechanizeBrowser import MechanizeBrowser
@@ -14,15 +18,17 @@ from MechanizeBrowser import MechanizeBrowser
 
 def start(section):
     CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
-    DRIVER_PATH = os.path.join(CURRENT_DIR, '../bin', helper.readConfig().get('DRIVER','FILENAME'))
+
+    helper.setup_database()
 
     try:
         # section='CSVFILE'
-        file_path = os.path.join(CURRENT_DIR, '..', helper.readConfig().get('STORAGE','CSV_PATH'), "{0}.csv".format(helper.readConfig().get(section, 'FILENAME')))
-        field_names = helper.readConfig().get(section,'FIELDNAMES').split(',')
-        name=helper.readConfig().get(section,'NAME')
-        city=helper.readConfig().get(section,'CITY')
-        state=helper.readConfig().get(section,'STATE')
+        file_path = os.path.join(CURRENT_DIR, '..', helper.readConfig().get(
+            'STORAGE', 'CSV_PATH'), "{0}.csv".format(helper.readConfig().get(section, 'FILENAME')))
+        field_names = helper.readConfig().get(section, 'FIELDNAMES').split(',')
+        name = helper.readConfig().get(section, 'NAME')
+        city = helper.readConfig().get(section, 'CITY')
+        state = helper.readConfig().get(section, 'STATE')
 
         # initiate browser
         browser = MechanizeBrowser(section)
@@ -38,7 +44,8 @@ def start(section):
 
                 try:
                     browser.search(index, first_name, last_name, city_state)
-                    log.info("Parsed for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (first_name, last_name, city_state, index))
+                    log.info("Parsed for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (
+                        first_name, last_name, city_state, index))
                     time.sleep(1)
                 except Exception, e:
                     print str(e)
