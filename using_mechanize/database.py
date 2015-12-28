@@ -17,7 +17,7 @@ def configure_logging():
     fh.setLevel(logging.DEBUG)
     # create console handler which logs even debug messages
     ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
+    ch.setLevel(logging.INFO)
     # create formatter and add it to the handlers
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -27,14 +27,14 @@ def configure_logging():
     logger.addHandler(fh)
     logger.addHandler(ch)
 
-    # test
-    logger.info('test log')
-
 
 class REThink():
     rethinkdb = rethinkdb
 
     def __init__(self, db=None, host="localhost", port=28015):
+        if not logger:
+            configure_logging()
+
         self.host = host
         self.port = port
         self.db = db
@@ -60,40 +60,42 @@ class REThink():
         rethinkdb.db_create(database_name).run()
 
     def use_database(self, database_name):
+        self.db = database_name
         rethinkdb.db(database_name)
 
     def create_table(self, table_name):
-        table_list = rethinkdb.table_list().run()
+        table_list = rethinkdb.db(self.db).table_list().run()
         if table_name in table_list:
             logger.debug("table already exists")
             return
 
-        response = rethinkdb.table_create(table_name).run()
+        response = rethinkdb.db(self.db).table_create(table_name).run()
         logger.debug(response)
 
     def insert(self, table_name, data):
         logger.debug("insert data to table %s" % table_name)
-        response = rethinkdb.table(table_name).insert(data).run()
+        response = rethinkdb.db(self.db).table(table_name).insert(data).run()
         logger.debug(response)
 
     def read(self, table_name, condition=None):
         logger.debug("reading data from table %s" % table_name)
         if condition:
-            cursor = rethinkdb.table(table_name).filter(condition).run()
+            cursor = rethinkdb.db(self.db).table(
+                table_name).filter(condition).run()
             return cursor
 
         cursor = rethinkdb.table(table_name).run()
         return cursor
 
     def read_one(self, table_name, id):
-        cursor = rethinkdb.table(table_name).get(id).run()
+        cursor = rethinkdb.db(self.db).table(table_name).get(id).run()
         return cursor
 
     def update(self, table_name, data):
         pass
 
     def delete(self, table_name):
-        rethinkdb.table(table_name).delete()
+        rethinkdb.db(self.db).table(table_name).delete()
 
     def delete_all(self, table_name):
-        rethinkdb.table(table_name).delete().run()
+        rethinkdb.db(self.db).table(table_name).delete().run()
