@@ -37,6 +37,9 @@ def setup_database():
 
 def get_database_object():
     global database
+    if not database:
+        setup_database()
+
     return database
 
 
