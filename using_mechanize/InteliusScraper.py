@@ -110,9 +110,11 @@ class InteliusScraper(object):
         lexml = html.fromstring(source)
         data['name'] = lexml.xpath("//div[@class='identity']/span[@class='name']/text()")[0]
         data['age'] = lexml.xpath("//div[@class='identity']/p")[0].text_content()
-        data['phone_nos'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li")]
+        data['phone_nos'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li") if 'mobile' not in li.text_content()]
+        data['mobile'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li") if 'mobile' in li.text_content()]
         data['emails'] = [li.text_content().strip() for li in lexml.xpath("//div[@class='inner contact']/ul[2]/li")]
         data['addresses'] = [" ".join(li.xpath("./a/text()")) for li in lexml.xpath("//ul[@class='addresses']/li")]
+
         return data
 
     def save_full_profile(self, section, index, first_name, last_name, data):
