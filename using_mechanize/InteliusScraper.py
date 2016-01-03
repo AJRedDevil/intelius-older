@@ -102,10 +102,10 @@ class InteliusScraper(object):
         lexml = html.fromstring(source)
         return lexml.xpath("//div[contains(@class,'box-d')]/div[@class='inner']/div[@class='identity']/div[@class='actions']/a/@href")
 
-    def extract_full_profile(self, source):
-        return self.__extract_full_profile(source)
+    def extract_full_profile(self, source, city_state):
+        return self.__extract_full_profile(source, city_state)
 
-    def __extract_full_profile(self, source):
+    def __extract_full_profile(self, source, city_state):
         data = {}
         lexml = html.fromstring(source)
         data['name'] = lexml.xpath("//div[@class='identity']/span[@class='name']/text()")[0]
@@ -114,6 +114,16 @@ class InteliusScraper(object):
         data['mobile'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li") if 'mobile' in li.text_content()]
         data['emails'] = [li.text_content().strip() for li in lexml.xpath("//div[@class='inner contact']/ul[2]/li")]
         data['addresses'] = [" ".join(li.xpath("./a/text()")) for li in lexml.xpath("//ul[@class='addresses']/li")]
+
+        found = False
+        for address in data['addresses']:
+            if city_state.lower() in address.lower():
+                found = True
+
+        if not found:
+            address = ""
+
+        data['matched_address'] = address
 
         return data
 
