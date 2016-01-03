@@ -60,7 +60,7 @@ def start(args):
 
     with open(file_path, 'rU') as f:
         csv_reader = csv.DictReader(f, all_fields)
-        print csv_reader.next()   # The first row is the header
+        csv_reader.next()   # The first row is the header
         for row in csv_reader:
             database.insert(section_name, row)
 
@@ -69,3 +69,6 @@ if __name__ == '__main__':
     set_argparse()
     args = parser.parse_args()
     start(args)
+
+# sample command
+# ./using_mechanize/import_csv_to_database.py -n "Cash Buyer Name" -c "Cash Buyer City" -s "Cash Buyer State" -a "Cash Buyer Name,Cash Buyer Address,Cash Buyer City,Cash Buyer State,Cash Buyer Zip" --section BALTIMORE --file using_mechanize/Baltimore\ City\ -\ Cash\ Buyers_Sample.csv

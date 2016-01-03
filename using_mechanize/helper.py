@@ -25,8 +25,6 @@ def setup_database():
     db = config.get('DATABASE', 'database')
     table = config.get('DATABASE', 'table')
 
-    print host, port, db, table
-
     database = REThink(db=None, host=host, port=port)
 
     database.create_database(db)
