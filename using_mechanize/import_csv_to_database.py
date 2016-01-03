@@ -15,9 +15,7 @@ def set_argparse():
     parser = argparse.ArgumentParser(
         description='Process CSV file and put it into database')
     parser.add_argument(
-        '-f', '--firstname', help='first name header value', required=True)
-    parser.add_argument(
-        '-l', '--lastname', help='last name header value', required=True)
+        '-n', '--name', help='name header value', required=True)
     parser.add_argument(
         '-c', '--city', help='city header value', required=True)
     parser.add_argument(
@@ -25,7 +23,7 @@ def set_argparse():
     parser.add_argument(
         '-a', '--all', help='all header value comma separated', required=True)
     parser.add_argument(
-        '--file', help='csv file location', required=True)
+        '-f', '--file', help='csv file location', required=True)
     parser.add_argument(
         '--section', help='section name', required=True)
 
@@ -33,11 +31,10 @@ def set_argparse():
 def start(args):
     database = helper.get_database_object()
 
-    first_name = args.firstname
-    last_name = args.lastname
+    name = args.name
     city = args.city
     state = args.state
-    section_name = args.section
+    section_name = "%s_input" % args.section
     file_path = args.file
 
     all_fields = [key.strip() for key in args.all.split(",")]
@@ -45,8 +42,7 @@ def start(args):
     data = {
         "name": section_name,
         "headers": {
-            "first_name": first_name,
-            "last_name": last_name,
+            "name": name,
             "city": city,
             "state": state,
             "all_fields": all_fields
