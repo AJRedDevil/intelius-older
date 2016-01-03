@@ -64,7 +64,7 @@ def save_detail_to_storage(section, file_name, data):
     with open(file_path, 'w') as f:
         json.dump(data, f)
 
-    database.insert(config.get('DATABASE', 'table'), data)
+    database.insert(section, data)
 
 
 def split_name(name):
