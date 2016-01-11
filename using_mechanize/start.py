@@ -82,7 +82,7 @@ def start_from_database(section):
         city = field_names.get('headers').get('city')
         state = field_names.get('headers').get('state')
 
-        content = database.read(section)
+        content = database.read("%s_input" % section)
 
         # initiate browser
         browser = MechanizeBrowser(section)
