@@ -34,6 +34,7 @@ def start(args):
     name = args.name
     city = args.city
     state = args.state
+    section = args.section
     section_name = "%s_input" % args.section
     file_path = args.file
 
@@ -52,6 +53,7 @@ def start(args):
     database.create_table(header_table)
     database.insert(header_table, data)
 
+    database.create_table(section)
     database.create_table(section_name)
 
     with open(file_path, 'rU') as f:
