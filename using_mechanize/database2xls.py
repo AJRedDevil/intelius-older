@@ -163,11 +163,22 @@ class DB2XLS(object):
                 "emails": emails
             })
 
-    def start(self, name):
+    def export_by_name(self, name):
         cursor = self.database.read(self.section, REThink.rethinkdb.row['name'] == name)
         cursor = list(cursor)
         for item in cursor:
             self.parse(item)
+
+    def export_all(self):
+        cursor = self.database.group(self.section, 'name')
+        for item in cursor:
+            self.export_by_name(item)
+
+    def start(self, name=None):
+        if name:
+            self.export_by_name(name)
+        else:
+            self.export_all()
 
         self.xlsx.write_header()
         self.format_xls()
