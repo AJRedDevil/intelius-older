@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-import subprocess
 
 import logging as logger
 from database2xls import DB2XLS
@@ -38,13 +37,16 @@ def import_csv_to_db(args):
     logger.info("import successful")
 
     logger.info("parsing data from intellus")
+    # remove number 5 to scrap all data
     start_from_database(section, 5)
     logger.info("parsing complete")
 
     logger.info("exporting from database to xls file")
     db2xls = DB2XLS(section)
     # provide actual name
-    db2xls.start("Sang-Jae J Lee")
+    # db2xls.start("Jillian J Orlow")
+    # group by name and perform for individual name
+    db2xls.start()
     logger.info("exporting complete")
 
 
