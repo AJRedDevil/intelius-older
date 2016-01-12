@@ -28,45 +28,52 @@ def set_argparse():
         '--section', help='section name', required=True)
 
 
-def start(args):
-    database = helper.get_database_object()
+class CSV2DB(object):
+    """docstring for CSV2DB"""
+    def __init__(self, args):
+        super(CSV2DB, self).__init__()
+        self.args = args
 
-    name = args.name
-    city = args.city
-    state = args.state
-    section = args.section
-    section_name = "%s_input" % args.section
-    file_path = args.file
+    def save(self):
+        database = helper.get_database_object()
 
-    all_fields = [key.strip() for key in args.all.split(",")]
+        name = self.args.name
+        city = self.args.city
+        state = self.args.state
+        section = self.args.section
+        section_name = "%s_input" % self.args.section
+        file_path = self.args.file
 
-    data = {
-        "name": section_name,
-        "headers": {
-            "name": name,
-            "city": city,
-            "state": state,
-            "all_fields": all_fields
+        all_fields = [key.strip() for key in self.args.all.split(",")]
+
+        data = {
+            "name": section_name,
+            "headers": {
+                "name": name,
+                "city": city,
+                "state": state,
+                "all_fields": all_fields
+            }
         }
-    }
 
-    database.create_table(header_table)
-    database.insert(header_table, data)
+        database.create_table(header_table)
+        database.insert(header_table, data)
 
-    database.create_table(section)
-    database.create_table(section_name)
+        database.create_table(section)
+        database.create_table(section_name)
 
-    with open(file_path, 'rU') as f:
-        csv_reader = csv.DictReader(f, all_fields)
-        csv_reader.next()   # The first row is the header
-        for row in csv_reader:
-            database.insert(section_name, row)
+        with open(file_path, 'rU') as f:
+            csv_reader = csv.DictReader(f, all_fields)
+            csv_reader.next()   # The first row is the header
+            for row in csv_reader:
+                database.insert(section_name, row)
 
 
 if __name__ == '__main__':
     set_argparse()
     args = parser.parse_args()
-    start(args)
+    csv2db = CSV2DB(args)
+    csv2db.start(args)
 
 # sample command
 # ./using_mechanize/import_csv_to_database.py -n "Cash Buyer Name" -c "Cash Buyer City" -s "Cash Buyer State" -a "Cash Buyer Name,Cash Buyer Address,Cash Buyer City,Cash Buyer State,Cash Buyer Zip" --section BALTIMORE --file using_mechanize/Baltimore\ City\ -\ Cash\ Buyers_Sample.csv
