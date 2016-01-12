@@ -119,8 +119,8 @@ class DB2XLS(object):
                     test = [
                         ("name", _row[0]),
                         ("age", _row[1]),
-                        ("addresses", _row[2]),
                         ("matched_address", _row[3]),
+                        ("addresses", _row[2]),
                         ("phone_nos", _row[4]),
                         ("mobile", _row[5]),
                         ("emails", _row[6])
