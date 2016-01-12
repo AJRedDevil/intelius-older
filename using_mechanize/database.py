@@ -84,7 +84,7 @@ class REThink():
                 table_name).filter(condition).run()
             return cursor
 
-        cursor = rethinkdb.table(table_name).run()
+        cursor = rethinkdb.db(self.db).table(table_name).run()
         return cursor
 
     def read_one(self, table_name, id):
