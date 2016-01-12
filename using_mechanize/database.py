@@ -91,6 +91,10 @@ class REThink():
         cursor = rethinkdb.db(self.db).table(table_name).get(id).run()
         return cursor
 
+    def group(self, table_name, group_key):
+        cursor = rethinkdb.db(self.db).table(table_name).group(group_key).run()
+        return cursor
+
     def update(self, table_name, data):
         pass
 
