@@ -2,6 +2,8 @@
 
 import xlsxwriter
 
+import helper
+
 from database import REThink, configure_logging
 configure_logging()
 
@@ -82,12 +84,14 @@ class XLSWriter:
         self.matched_address = None
 
 
-class XLSFormat(object):
+class DB2XLS(object):
 
-    def __init__(self, section, data):
-        self.data = data
+    def __init__(self, section):
         self.final_data = []
+        self.section = section
         self.file_name = section
+
+        self.database = helper.get_database_object()
 
         self.xlsx = XLSWriter("%s.xlsx" % self.file_name)
 
@@ -159,23 +163,25 @@ class XLSFormat(object):
                 "emails": emails
             })
 
-    def start(self):
-        for item in self.data:
+    def start(self, name):
+        cursor = self.database.read(self.section, REThink.rethinkdb.row['name'] == name)
+        cursor = list(cursor)
+        for item in cursor:
             self.parse(item)
 
         self.xlsx.write_header()
         self.format_xls()
         self.xlsx.close()
 
-host = "localhost"
-port = 28015
-db = "intelius"
-table = "BALTIMORE"
+# host = "localhost"
+# port = 28015
+# db = "intelius"
+# table = "BALTIMORE"
 
-r = REThink(db=db, host=host, port=port)
-cursor = r.read(table, REThink.rethinkdb.row["name"] == "John H Despeaux")
-# cursor = r.read(table, REThink.rethinkdb.row["name"] == "Gopal Ghimire")
-cursor = list(cursor)
-section = "BALTIMORE"
-xlsformat = XLSFormat(section, cursor)
-xlsformat.start()
+# r = REThink(db=db, host=host, port=port)
+# cursor = r.read(table, REThink.rethinkdb.row["name"] == "John H Despeaux")
+# # cursor = r.read(table, REThink.rethinkdb.row["name"] == "Gopal Ghimire")
+# cursor = list(cursor)
+# section = "BALTIMORE"
+# xlsformat = XLSFormat(section)
+# xlsformat.start()
