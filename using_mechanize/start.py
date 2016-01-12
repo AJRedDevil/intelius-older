@@ -65,7 +65,7 @@ def start(section):
     print "Parsing completed"
 
 
-def start_from_database(section):
+def start_from_database(section, LIMIT=None):
     database = helper.get_database_object()
     try:
         field_names = database.read(
@@ -90,6 +90,9 @@ def start_from_database(section):
 
         index = 1
         for row in content:
+            if LIMIT and index > LIMIT:
+                break
+
             first_name, last_name = helper.split_name(row[name])
             city_state = "{0} , {1}".format(row[city], row[state])
 
