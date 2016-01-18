@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+
+import argparse
 import xlsxwriter
 
 import helper
@@ -196,3 +198,17 @@ class DB2XLS(object):
 # section = "BALTIMORE"
 # xlsformat = XLSFormat(section)
 # xlsformat.start()
+
+def parse_arguments():
+    '''parse arguments'''
+
+    parser = argparse.ArgumentParser(description="Process database data into excel file")
+    parser.add_argument(
+        '--section', help='section name', required=True)
+    result = parser.parse_args()
+    return result
+
+if __name__ == "__main__":
+    result = parse_arguments()
+    db2xls = DB2XLS(result.section)
+    db2xls.start()

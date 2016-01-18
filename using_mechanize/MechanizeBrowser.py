@@ -85,6 +85,7 @@ class MechanizeBrowser(object):
         self.browser.submit()
 
     def change_proxy(self):
+        return
         proxy = random.choice(self.http_proxy_server)
         # print "using proxy %s" % proxy
         self.browser.set_proxies({"http": proxy})

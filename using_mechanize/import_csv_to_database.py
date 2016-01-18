@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
-import csv
 import argparse
+import csv
+import os
+
 
 import helper
 
 parser = None
 
 header_table = "csv_header"
+
+CURRENT_DIR = os.path.dirname(__file__)
 
 
 def set_argparse():
@@ -30,21 +34,22 @@ def set_argparse():
 
 class CSV2DB(object):
     """docstring for CSV2DB"""
-    def __init__(self, args):
+    def __init__(self, section):
         super(CSV2DB, self).__init__()
-        self.args = args
+        self.section = section
 
     def save(self):
         database = helper.get_database_object()
 
-        name = self.args.name
-        city = self.args.city
-        state = self.args.state
-        section = self.args.section
-        section_name = "%s_input" % self.args.section
-        file_path = self.args.file
+        config = helper.readConfig()
+        name = config.get(self.section, 'NAME')
+        city = config.get(self.section, 'CITY')
+        state = config.get(self.section, 'STATE')
+        section = self.section
+        section_name = "%s_input" % self.section
+        file_name = config.get(self.section, 'FILENAME')
 
-        all_fields = [key.strip() for key in self.args.all.split(",")]
+        all_fields = [key.strip() for key in config.get(self.section, 'ALL_FIELD').split(",")]
 
         data = {
             "name": section_name,
@@ -59,9 +64,11 @@ class CSV2DB(object):
         database.create_table(header_table)
         database.insert(header_table, data)
 
-        database.create_table(section)
+        database.create_table(self.section)
         database.create_table(section_name)
 
+        csv_path = os.path.join(CURRENT_DIR, '..', config.get('STORAGE', 'CSV_PATH'))
+        file_path = os.path.join(csv_path, file_name)
         with open(file_path, 'rU') as f:
             csv_reader = csv.DictReader(f, all_fields)
             csv_reader.next()   # The first row is the header
