@@ -152,14 +152,14 @@ class MechanizeBrowser(object):
 
         self.extract_profile_urls()
 
-        self.extract_all_profiles_from_search()
+        self.extract_all_profiles_from_search(index)
 
         self.scraper.save_full_profile(self.section, index, first_name, last_name, self.profile_data)
 
-    def extract_all_profiles_from_search(self):
+    def extract_all_profiles_from_search(self, index):
         for profile_url in self.profile_url_lists:
             content = self.open_url(profile_url)
-            self.profile_data.append(self.scraper.extract_full_profile(content, self.city_state))
+            self.profile_data.append(self.scraper.extract_full_profile(content, self.city_state, index))
 
     def pre_process(self):
         if self.login_required:

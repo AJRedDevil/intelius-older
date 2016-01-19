@@ -69,11 +69,14 @@ class CSV2DB(object):
 
         csv_path = os.path.join(CURRENT_DIR, '..', config.get('STORAGE', 'CSV_PATH'))
         file_path = os.path.join(csv_path, file_name)
+        index = 1
         with open(file_path, 'rU') as f:
             csv_reader = csv.DictReader(f, all_fields)
             csv_reader.next()   # The first row is the header
             for row in csv_reader:
+                row['index'] = index
                 database.insert(section_name, row)
+                index += 1
 
 
 if __name__ == '__main__':

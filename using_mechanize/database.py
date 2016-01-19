@@ -87,6 +87,18 @@ class REThink():
         cursor = rethinkdb.db(self.db).table(table_name).run()
         return cursor
 
+    def readInOrder(self, table_name, order_by, condition=None):
+        logger.debug("reading data from table %s" % table_name)
+        if condition:
+            cursor = rethinkdb.db(self.db).table(
+                table_name).order_by(order_by).filter(condition).run()
+            return cursor
+
+        cursor = rethinkdb.db(self.db).table(
+                table_name).order_by(order_by).run()
+        return cursor
+
+
     def read_one(self, table_name, id):
         cursor = rethinkdb.db(self.db).table(table_name).get(id).run()
         return cursor

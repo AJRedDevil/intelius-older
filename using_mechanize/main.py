@@ -47,7 +47,7 @@ def import_csv_to_db(args):
 
     logger.info("parsing data from intellus")
     # remove number 5 to scrap all data
-    start_from_database(section, 5)
+    start_from_database(section)
     logger.info("parsing complete")
 
     logger.info("exporting from database to xls file")

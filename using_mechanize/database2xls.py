@@ -166,7 +166,7 @@ class DB2XLS(object):
             })
 
     def export_by_name(self, name):
-        cursor = self.database.read(self.section, REThink.rethinkdb.row['name'] == name)
+        cursor = self.database.readInOrder(self.section, 'index', REThink.rethinkdb.row['name'] == name)
         cursor = list(cursor)
         for item in cursor:
             self.parse(item)
