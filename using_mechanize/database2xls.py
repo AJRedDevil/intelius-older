@@ -57,7 +57,7 @@ class XLSWriter:
             if key in ["mobile", "matched_address"] and value:
                 style = self.mobile
 
-            if key == "addresses" and value == self.matched_address:
+            if self.matched_address and key == "addresses" and value == self.matched_address:
                 style = self.mobile
 
             if key == "matched_address":

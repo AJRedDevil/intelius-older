@@ -43,7 +43,7 @@ def start(section):
                 city_state = "{0} , {1}".format(row[city], row[state])
 
                 try:
-                    browser.search(index, first_name, last_name, city_state)
+                    browser.search(index, first_name, last_name, row[city], row[state])
                     log.info("Parsed for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (
                         first_name, last_name, city_state, index))
                     time.sleep(1)
@@ -97,7 +97,7 @@ def start_from_database(section, LIMIT=None):
             city_state = "{0} , {1}".format(row[city], row[state])
 
             try:
-                browser.search(index, first_name, last_name, city_state)
+                browser.search(index, first_name, last_name, row[city], row[state])
                 log.info("Parsed for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (
                     first_name, last_name, city_state, index))
                 time.sleep(1)
