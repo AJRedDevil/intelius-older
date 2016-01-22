@@ -172,7 +172,7 @@ class DB2XLS(object):
             self.parse(item)
 
     def export_all(self):
-        cursor = self.database.group(self.section, 'name')
+        cursor = self.database.group(self.section, 'name', 'index')
         for item in cursor:
             self.export_by_name(item)
 

@@ -81,6 +81,7 @@ def start_from_database(section, LIMIT=None):
         name = field_names.get('headers').get('name')
         city = field_names.get('headers').get('city')
         state = field_names.get('headers').get('state')
+        address = field_names.get('headers').get('address')
 
         content = database.readInOrder("%s_input" % section, 'index')
 
@@ -95,9 +96,10 @@ def start_from_database(section, LIMIT=None):
 
             first_name, last_name = helper.split_name(row[name])
             city_state = "{0} , {1}".format(row[city], row[state])
+            matching_address = row[address]
 
             try:
-                browser.search(index, first_name, last_name, row[city], row[state])
+                browser.search(index, first_name, last_name, row[city], row[state], matching_address)
                 log.info("Parsed for First Name: '%s', Last Name: '%s' and City State: '%s' indexed: '%s'" % (
                     first_name, last_name, city_state, index))
                 time.sleep(1)

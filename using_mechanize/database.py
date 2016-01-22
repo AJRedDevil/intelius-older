@@ -91,7 +91,7 @@ class REThink():
         logger.debug("reading data from table %s" % table_name)
         if condition:
             cursor = rethinkdb.db(self.db).table(
-                table_name).order_by(order_by).filter(condition).run()
+                table_name).filter(condition).order_by(order_by).run()
             return cursor
 
         cursor = rethinkdb.db(self.db).table(
@@ -103,8 +103,11 @@ class REThink():
         cursor = rethinkdb.db(self.db).table(table_name).get(id).run()
         return cursor
 
-    def group(self, table_name, group_key):
-        cursor = rethinkdb.db(self.db).table(table_name).group(group_key).run()
+    def group(self, table_name, group_key, order_by=None):
+        if order_by:
+            cursor = rethinkdb.db(self.db).table(table_name).group(group_key).order_by(order_by).run()
+        else:
+            cursor = rethinkdb.db(self.db).table(table_name).group(group_key).run()
         return cursor
 
     def update(self, table_name, data):

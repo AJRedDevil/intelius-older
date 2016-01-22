@@ -45,6 +45,7 @@ class CSV2DB(object):
         name = config.get(self.section, 'NAME')
         city = config.get(self.section, 'CITY')
         state = config.get(self.section, 'STATE')
+        address = config.get(self.section, 'ADDRESS')
         section = self.section
         section_name = "%s_input" % self.section
         file_name = config.get(self.section, 'FILENAME')
@@ -57,6 +58,7 @@ class CSV2DB(object):
                 "name": name,
                 "city": city,
                 "state": state,
+                "address": address,
                 "all_fields": all_fields
             }
         }
