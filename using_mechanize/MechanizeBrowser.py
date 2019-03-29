@@ -18,6 +18,7 @@ import helper
 
 from InteliusScraper import InteliusScraper
 
+
 class MaxTryException(Exception):
     # def __init__(self, message, errors):
     def __init__(self, message):
@@ -27,20 +28,22 @@ class MaxTryException(Exception):
         # # Now for your custom code...
         # self.errors = errors
 
+
 class MechanizeBrowser(object):
 
     def __init__(self, section):
         self.BASE_URL = "https://iservices.intelius.com/premier/dashboard.php"
 
         self.login_required = True
-        self.username = helper.readConfig().get('LOGIN','EMAIL')
-        self.password = helper.readConfig().get('LOGIN','PASSWORD')
+        self.username = helper.readConfig().get('LOGIN', 'EMAIL')
+        self.password = helper.readConfig().get('LOGIN', 'PASSWORD')
         self.login_url = self.BASE_URL
         self.login_form_index = 0  # index of form to use as login
         self.login_user_key = "email"
         self.login_password_key = "password"
 
-        self.http_proxy_server = ['120.198.231.22:8080', '124.206.133.227:80', '121.8.69.162:9797', '202.117.15.80:8080', '120.198.231.86:8080', '120.197.234.164:80', '24.173.40.24:8080', '123.134.185.11:4040', '180.73.0.6:81', '222.88.236.235:80', '125.212.37.72:3128', '198.169.246.30:80', '121.41.161.110:80', '46.105.152.77:8888', '124.88.67.31:81', '121.69.24.22:8118', '180.73.66.245:81', '109.207.61.148:8090', '92.222.237.20:8898', '106.38.251.62:8088', '124.88.67.40:843', '213.136.79.124:80', '121.69.8.234:8080', '117.136.234.5:80', '209.150.253.81:8080', '200.46.24.114:80', '183.207.228.122:80', '31.25.141.148:8080', '222.59.246.38:8118', '124.88.67.40:82', '121.15.230.126:9797', '116.212.157.111:8080', '115.228.54.251:3128', '60.250.81.97:80', '124.88.67.19:80', '196.36.53.202:9999', '122.76.249.2:8118', '124.88.67.40:83']
+        self.http_proxy_server = ['120.198.231.22:8080', '124.206.133.227:80', '121.8.69.162:9797', '202.117.15.80:8080', '120.198.231.86:8080', '120.197.234.164:80', '24.173.40.24:8080', '123.134.185.11:4040', '180.73.0.6:81', '222.88.236.235:80', '125.212.37.72:3128', '198.169.246.30:80', '121.41.161.110:80', '46.105.152.77:8888', '124.88.67.31:81', '121.69.24.22:8118', '180.73.66.245:81', '109.207.61.148:8090',
+                                  '92.222.237.20:8898', '106.38.251.62:8088', '124.88.67.40:843', '213.136.79.124:80', '121.69.8.234:8080', '117.136.234.5:80', '209.150.253.81:8080', '200.46.24.114:80', '183.207.228.122:80', '31.25.141.148:8080', '222.59.246.38:8118', '124.88.67.40:82', '121.15.230.126:9797', '116.212.157.111:8080', '115.228.54.251:3128', '60.250.81.97:80', '124.88.67.19:80', '196.36.53.202:9999', '122.76.249.2:8118', '124.88.67.40:83']
         shuffle(self.http_proxy_server)
         self.url_open_try = 0
         self.max_url_open_try = 30
@@ -95,7 +98,8 @@ class MechanizeBrowser(object):
             response = self.browser.open(url).read()
         except Exception, e:
             if self.url_open_try > self.max_url_open_try:
-                raise MaxTryException("Maximum try exceeded to open a single url")
+                raise MaxTryException(
+                    "Maximum try exceeded to open a single url")
 
             self.url_open_try += self.url_open_try
             print str(e)
@@ -141,10 +145,13 @@ class MechanizeBrowser(object):
         self.profile_url_lists = []
         self.profile_data = []
 
-        for form in self.browser.forms():
-            if form.attrs['id'] == 'sblock':
-                self.browser.form = form
+        formcount = 0
+        for frm in self.browser.forms():
+            if str(frm.attrs["id"]) == "frmNameSearch":
                 break
+            formcount = formcount+1
+        self.browser.select_form(nr=formcount)
+        # self.browser.select_form("search")
         # self.browser.select_form("search")
 
         self.browser.form['qf'] = first_name
@@ -156,12 +163,14 @@ class MechanizeBrowser(object):
 
         self.extract_all_profiles_from_search()
 
-        self.scraper.save_full_profile(self.section, index, first_name, last_name, self.profile_data)
+        self.scraper.save_full_profile(
+            self.section, index, first_name, last_name, self.profile_data)
 
     def extract_all_profiles_from_search(self):
         for profile_url in self.profile_url_lists:
             content = self.open_url(profile_url)
-            self.profile_data.append(self.scraper.extract_full_profile(content))
+            self.profile_data.append(
+                self.scraper.extract_full_profile(content))
 
     def pre_process(self):
         if self.login_required:
