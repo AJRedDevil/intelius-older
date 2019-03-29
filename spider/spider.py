@@ -18,12 +18,14 @@ from selenium.common.exceptions import ElementNotVisibleException, TimeoutExcept
 import helper
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
-DRIVER_PATH = os.path.join(CURRENT_DIR, '../bin', helper.readConfig().get('DRIVER','FILENAME'))
+DRIVER_PATH = os.path.join(CURRENT_DIR, '../bin',
+                           helper.readConfig().get('DRIVER', 'FILENAME'))
 
 URL = "https://iservices.intelius.com/premier/dashboard.php"
 
 EMAIL = os.environ['EMAIL']
 PASSWORD = os.environ['PASSWORD']
+
 
 class InteliusScraper(object):
     def __init__(self):
@@ -47,13 +49,13 @@ class InteliusScraper(object):
         elem.send_keys(Keys.RETURN)
         time.sleep(self.short_wait_time)
 
-    def search(self, last_name="", first_name="", city_state=""): #Phyllis Henderson Baltimore, MD
+    def search(self, last_name="", first_name="", city_state=""):  # Phyllis Henderson Baltimore, MD
         if not last_name:
             raise ValueError("Last Name is empty")
         assert "Intelius" in self.driver.title
         time.sleep(self.brisk)
         elem = self.driver.wait.until(EC.presence_of_element_located(
-                (By.NAME, "qf")))
+            (By.NAME, "qf")))
         elem.clear()
         elem.send_keys(first_name)
         elem = self.driver.find_element_by_name("qn")
@@ -71,9 +73,10 @@ class InteliusScraper(object):
         return lexml.xpath("//div[contains(@class,'box-d')]/div[@class='inner']/div[@class='identity']/div[@class='actions']/a/@href")
 
     def __get_profile_links(self):
-        prev_url=self.driver.current_url
+        prev_url = self.driver.current_url
         profile_link = []
-        profile_link.extend(self.__extract_profile_links(self.driver.page_source))
+        profile_link.extend(
+            self.__extract_profile_links(self.driver.page_source))
         while True:
             assert "Intelius" in self.driver.title
             try:
@@ -86,32 +89,39 @@ class InteliusScraper(object):
                 return profile_link
             if prev_url == self.driver.current_url:
                 return profile_link
-            profile_link.extend(self.__extract_profile_links(self.driver.page_source))
+            profile_link.extend(
+                self.__extract_profile_links(self.driver.page_source))
             prev_url = self.driver.current_url
         return profile_link
 
     def __extract_full_profile(self, source):
         data = {}
         lexml = html.fromstring(source)
-        data['name'] = lexml.xpath("//div[@class='identity']/span[@class='name']/text()")[0]
-        data['age'] = lexml.xpath("//div[@class='identity']/p")[0].text_content()
-        data['phone_nos'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li")]
-        data['emails'] = [li.text_content().strip() for li in lexml.xpath("//div[@class='inner contact']/ul[2]/li")]
-        data['addresses'] = [" ".join(li.xpath("./a/text()")) for li in lexml.xpath("//ul[@class='addresses']/li")]
+        data['name'] = lexml.xpath(
+            "//div[@class='identity']/span[@class='name']/text()")[0]
+        data['age'] = lexml.xpath(
+            "//div[@class='identity']/p")[0].text_content()
+        data['phone_nos'] = [li.text_content().strip().split("  ")[0]
+                             for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li")]
+        data['emails'] = [li.text_content().strip()
+                          for li in lexml.xpath("//div[@class='inner contact']/ul[2]/li")]
+        data['addresses'] = [" ".join(li.xpath("./a/text()"))
+                             for li in lexml.xpath("//ul[@class='addresses']/li")]
         return data
 
-    def __save_full_profile(self,index, first_name, last_name, data):
+    def __save_full_profile(self, index, first_name, last_name, data):
         file_name = "{0}_{1}_{2}".format(index, first_name, last_name)
         helper.save_detail_to_storage(file_name, data)
 
     def main_process(self):
         try:
-            section='CSVFILE'
-            file_path = os.path.join(CURRENT_DIR, '..', helper.readConfig().get('STORAGE','CSV_PATH'), "{0}.csv".format(helper.readConfig().get(section, 'FILENAME')))
-            field_names = helper.readConfig().get(section,'FIELDNAMES').split(',')
-            name=helper.readConfig().get(section,'NAME')
-            city=helper.readConfig().get(section,'CITY')
-            state=helper.readConfig().get(section,'STATE')
+            section = 'CSVFILE'
+            file_path = os.path.join(CURRENT_DIR, '..', helper.readConfig().get(
+                'STORAGE', 'CSV_PATH'), "{0}.csv".format(helper.readConfig().get(section, 'FILENAME')))
+            field_names = helper.readConfig().get(section, 'FIELDNAMES').split(',')
+            name = helper.readConfig().get(section, 'NAME')
+            city = helper.readConfig().get(section, 'CITY')
+            state = helper.readConfig().get(section, 'STATE')
             with open(file_path, 'rU') as f:
                 csv_reader = csv.DictReader(f, field_names)
                 csv_reader.next()   # The first row is the header
@@ -126,8 +136,10 @@ class InteliusScraper(object):
                         self.driver.get(link)
                         assert "Intelius" in self.driver.title
                         time.sleep(self.short_wait_time)
-                        data.append(self.__extract_full_profile(self.driver.page_source))
-                    self.__save_full_profile(index, first_name, last_name ,data)
+                        data.append(self.__extract_full_profile(
+                            self.driver.page_source))
+                    self.__save_full_profile(
+                        index, first_name, last_name, data)
                     index += 1
         except Exception, e:
             print str(e)
@@ -137,6 +149,7 @@ class InteliusScraper(object):
         finally:
             print tb
             self.driver.quit()
+
 
 if __name__ == "__main__":
     scraper = InteliusScraper()
