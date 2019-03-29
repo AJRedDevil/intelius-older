@@ -141,7 +141,11 @@ class MechanizeBrowser(object):
         self.profile_url_lists = []
         self.profile_data = []
 
-        self.browser.select_form("search")
+        for form in self.browser.forms():
+            if form.attrs['id'] == 'sblock':
+                self.browser.form = form
+                break
+        # self.browser.select_form("search")
 
         self.browser.form['qf'] = first_name
         self.browser.form['qn'] = last_name
