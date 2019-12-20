@@ -102,17 +102,31 @@ class InteliusScraper(object):
         lexml = html.fromstring(source)
         return lexml.xpath("//div[contains(@class,'box-d')]/div[@class='inner']/div[@class='identity']/div[@class='actions']/a/@href")
 
-    def extract_full_profile(self, source):
-        return self.__extract_full_profile(source)
+    def extract_full_profile(self, source, city_state, state, index, address):
+        return self.__extract_full_profile(source, city_state, state, index, address)
 
-    def __extract_full_profile(self, source):
+    def __extract_full_profile(self, source, city_state, state, index, matching_address):
         data = {}
         lexml = html.fromstring(source)
         data['name'] = lexml.xpath("//div[@class='identity']/span[@class='name']/text()")[0]
         data['age'] = lexml.xpath("//div[@class='identity']/p")[0].text_content()
-        data['phone_nos'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li")]
+        data['phone_nos'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li") if 'mobile' not in li.text_content()]
+        data['mobile'] = [li.text_content().strip().split("  ")[0] for li in lexml.xpath("//div[@class='inner contact']/ul[1]/li") if 'mobile' in li.text_content()]
         data['emails'] = [li.text_content().strip() for li in lexml.xpath("//div[@class='inner contact']/ul[2]/li")]
         data['addresses'] = [" ".join(li.xpath("./a/text()")) for li in lexml.xpath("//ul[@class='addresses']/li")]
+
+        found = False
+        for address in data['addresses']:
+            if matching_address.lower() in address.lower():
+                found = True
+                break
+
+        if not found:
+            address = ""
+
+        data['matched_address'] = address
+        data['index'] = index
+
         return data
 
     def save_full_profile(self, section, index, first_name, last_name, data):

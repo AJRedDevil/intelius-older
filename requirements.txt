@@ -1,5 +1,8 @@
+backports.functools-lru-cache==1.5
+beautifulsoup4==4.7.1
+bs4==0.0.1
 lxml==3.5.0
 mechanize==0.2.5
 requests==2.8.1
 selenium==2.48.0
-wsgiref==0.1.2
+soupsieve==1.9

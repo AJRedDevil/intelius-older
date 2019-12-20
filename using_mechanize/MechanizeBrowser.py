@@ -92,6 +92,7 @@ class MechanizeBrowser(object):
         self.browser.submit()
 
     def change_proxy(self):
+        return
         proxy = random.choice(self.http_proxy_server)
         # print "using proxy %s" % proxy
         self.browser.set_proxies({"http": proxy})
@@ -144,7 +145,11 @@ class MechanizeBrowser(object):
         # return
         self.next_result_page()
 
-    def search(self, index, first_name, last_name, city_state):
+    def search(self, index, first_name, last_name, city, state, address):
+        self.city_state = "{0} , {1}".format(city, state)
+        self.city = city
+        self.state = state
+        self.matching_address = address
         self.first_search = True
         self.profile_url_lists = []
         self.profile_data = []
@@ -154,17 +159,17 @@ class MechanizeBrowser(object):
 
         self.browser.form['qf'] = first_name
         self.browser.form['qn'] = last_name
-        self.browser.form['qcs'] = city_state
+        self.browser.form['qcs'] = self.city_state
         self.browser.submit()
 
         self.extract_profile_urls()
 
-        self.extract_all_profiles_from_search()
+        self.extract_all_profiles_from_search(index)
 
         self.scraper.save_full_profile(
             self.section, index, first_name, last_name, self.profile_data)
 
-    def extract_all_profiles_from_search(self):
+    def extract_all_profiles_from_search(self, index):
         for profile_url in self.profile_url_lists:
             content = self.open_url(profile_url)
             self.profile_data.append(
