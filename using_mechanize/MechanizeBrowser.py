@@ -19,6 +19,10 @@ import helper
 from InteliusScraper import InteliusScraper
 
 
+def select_form_by_id(form):
+    return form.attrs.get('id', None) == 'frmNameSearch'
+
+
 class MaxTryException(Exception):
     # def __init__(self, message, errors):
     def __init__(self, message):
@@ -150,12 +154,7 @@ class MechanizeBrowser(object):
         self.profile_url_lists = []
         self.profile_data = []
 
-        formcount = 0
-        for frm in self.browser.forms():
-            if str(frm.attrs["id"]) == "frmNameSearch":
-                break
-            formcount = formcount+1
-        self.browser.select_form(nr=formcount)
+        self.browser.select_form(predicate=select_form_by_id)
         # self.browser.select_form("search")
 
         self.browser.form['qf'] = first_name
@@ -173,8 +172,8 @@ class MechanizeBrowser(object):
     def extract_all_profiles_from_search(self, index):
         for profile_url in self.profile_url_lists:
             content = self.open_url(profile_url)
-            self.profile_data.append(self.scraper.extract_full_profile(
-                content, self.city_state, self.state, index, self.matching_address))
+            self.profile_data.append(
+                self.scraper.extract_full_profile(content))
 
     def pre_process(self):
         if self.login_required:
