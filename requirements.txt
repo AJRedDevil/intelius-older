@@ -1,7 +1,7 @@
 backports.functools-lru-cache==1.5
 beautifulsoup4==4.7.1
 bs4==0.0.1
-lxml==4.6.2
+lxml==4.6.3
 mechanize==0.2.5
 requests==2.20.0
 selenium==2.48.0
